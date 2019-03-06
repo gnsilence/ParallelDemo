@@ -11,17 +11,20 @@ namespace Parallel.Demo
     {
         static CSRedis.CSRedisClient csredis = new CSRedis.CSRedisClient("127.0.0.1:6379,password=abc@123");
         static int Batchsize = 1000;//接收多少条处理一次
-        static DateTime lastsubtime;
+        static DateTime lastsubtime=DateTime.Now;
         static System.Timers.Timer timer = new System.Timers.Timer(2000);
         static List<Person> persons = new List<Person>();
         private static ManualResetEvent _exit = null;
-        //定义批处理接收体,Greedy(true,贪婪模式，给多少要多少，false的话必须给够足够数量才接收)
+        /* 定义批处理接收体,
+         * Greedy(true,贪婪模式，给多少要多少，false的话必须给够足够数量才接收)这种场景适合数据源持续输入
+         * 确定数量的数据源可以设置为false，这样即使不足设定数量也会发送剩余数据
+        */
         static BatchBlock<Person> batchpersons = new BatchBlock<Person>(Batchsize, new GroupingDataflowBlockOptions() { Greedy = true });
         static void Main(string[] args)
         {
             timer.Start();
             _exit = new ManualResetEvent(false);
-            Console.WriteLine("程序已经启动，输入Ctr+Break可以退出程序");
+            Console.WriteLine("程序已经启动，输入Ctr+C可以退出程序");
             //接收多少条数据进行处理
             AddPersonBatched();
         }
@@ -56,9 +59,10 @@ namespace Parallel.Demo
         /// <param name="e"></param>
         private static void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if ((DateTime.Now - lastsubtime).TotalMinutes >5)
+            if ((DateTime.Now - lastsubtime).TotalMinutes >2)
             {
                 batchpersons.TriggerBatch();
+                lastsubtime = DateTime.Now;
             }
         }
         /// <summary>
