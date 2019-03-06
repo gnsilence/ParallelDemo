@@ -9,7 +9,7 @@ namespace Parallel.Demo
 {
     class Program
     {
-        static CSRedis.CSRedisClient csredis = new CSRedis.CSRedisClient("47.105.185.242:6379,password=abc@123");
+        static CSRedis.CSRedisClient csredis = new CSRedis.CSRedisClient("127.0.0.1:6379,password=abc@123");
         static int Batchsize = 1000;//接收多少条处理一次
         static DateTime lastsubtime;
         static System.Timers.Timer timer = new System.Timers.Timer(2000);
