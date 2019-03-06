@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-namespace 并行编程测试项目
+namespace Parallel.Demo
 {
     class Program
     {
